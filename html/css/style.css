@@ -30,7 +30,6 @@ body {
     border-radius: 8px;
     background: rgba(15, 15, 20, 0.92);
     border-left: 4px solid #555;
-    backdrop-filter: blur(10px);
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
     min-width: 280px;
     max-width: 340px;
