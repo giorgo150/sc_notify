@@ -3,10 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
     <div id="notification-container"></div>
     <script src="js/app.js"></script>
+    <script>
+        // Debug: only runs when opened directly in browser (not in FiveM NUI)
+        if (!window.invokeNative) {
+            document.body.style.background = '#0a0a0f';
+            var types = ['info', 'success', 'warning', 'error'];
+            var titles = ['Információ', 'Sikeres', 'Figyelmeztetés', 'Hiba'];
+            var messages = [
+                'Ez egy információs értesítés.',
+                'A művelet sikeresen végrehajtva!',
+                'Figyelem, valami nem stimmel.',
+                'Hiba történt a feldolgozás során.'
+            ];
+            types.forEach(function (t, i) {
+                setTimeout(function () {
+                    window.postMessage({ action: 'notify', type: t, title: titles[i], message: messages[i], duration: 15000 }, '*');
+                }, i * 400);
+            });
+        }
+    </script>
 </body>
 </html>

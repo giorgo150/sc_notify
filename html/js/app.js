@@ -1,46 +1,68 @@
 const container = document.getElementById('notification-container');
 const MAX_NOTIFICATIONS = 5;
 
+// Scale UI based on 1080p base resolution
+function updateScale() {
+    var scale = window.innerHeight / 1080;
+    container.style.transform = 'scale(' + scale + ')';
+    container.style.transformOrigin = 'top right';
+}
+updateScale();
+window.addEventListener('resize', updateScale);
+
 const ICONS = {
-    info: '<svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>',
-    success: '<svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>',
-    warning: '<svg viewBox="0 0 24 24"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>',
-    error: '<svg viewBox="0 0 24 24"><path d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z"/></svg>'
+    info: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>',
+    success: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>',
+    warning: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
+    error: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>'
 };
 
-function createNotification(data) {
-    const type = data.type || 'info';
-    const title = data.title || '';
-    const message = data.message || '';
-    const duration = data.duration || 5000;
+const CLOSE_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
 
-    // Limit max notifications
+function removeNotification(el) {
+    el.classList.add('removing');
+    setTimeout(function () {
+        if (el.parentNode) el.remove();
+    }, 300);
+}
+
+function createNotification(data) {
+    var type = data.type || 'info';
+    var title = data.title || '';
+    var message = data.message || '';
+    var duration = data.duration || 5000;
+
     while (container.children.length >= MAX_NOTIFICATIONS) {
-        const oldest = container.firstChild;
+        var oldest = container.firstChild;
         if (oldest) oldest.remove();
     }
 
-    const el = document.createElement('div');
+    var el = document.createElement('div');
     el.className = 'notification ' + type;
 
-    let html = '<div class="notification-icon">' + (ICONS[type] || ICONS.info) + '</div>';
+    var html = '<div class="notification-icon">' + (ICONS[type] || ICONS.info) + '</div>';
     html += '<div class="notification-content">';
     if (title) {
         html += '<div class="notification-title">' + escapeHtml(title) + '</div>';
     }
     html += '<div class="notification-message">' + escapeHtml(message) + '</div>';
     html += '</div>';
+    html += '<div class="notification-close">' + CLOSE_ICON + '</div>';
     html += '<div class="notification-progress" style="animation-duration: ' + duration + 'ms;"></div>';
 
     el.innerHTML = html;
     container.appendChild(el);
 
+    // Close button
+    var closeBtn = el.querySelector('.notification-close');
+    closeBtn.addEventListener('click', function () {
+        clearTimeout(timer);
+        removeNotification(el);
+    });
+
     // Auto remove
-    setTimeout(function () {
-        el.classList.add('removing');
-        setTimeout(function () {
-            if (el.parentNode) el.remove();
-        }, 300);
+    var timer = setTimeout(function () {
+        removeNotification(el);
     }, duration);
 }
 
@@ -50,7 +72,6 @@ function escapeHtml(text) {
     return div.innerHTML;
 }
 
-// NUI message listener
 window.addEventListener('message', function (event) {
     if (event.data.action === 'notify') {
         createNotification(event.data);
