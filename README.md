@@ -1,56 +1,56 @@
 # SC Notify
 
- notification rendszer FiveM szerverekhez.
+Notification system for FiveM servers.
 
 ---
 
-## Meghívás
+## Usage
 
-### Export (kliens oldal)
+### Export (client side)
 
 ```lua
 exports.sc_notify:notify({
     type     = 'success',
-    title    = 'Sikeres művelet',
-    message  = 'A jármű sikeresen tárolva.',
+    title    = 'Operation successful',
+    message  = 'Vehicle stored successfully.',
     duration = 5000,
 })
 ```
 
-Rövid forma (default `info` típus, 5000ms):
+Short form (defaults to `info` type, 5000ms):
 
 ```lua
 exports.sc_notify:notify('Hello world!')
 ```
 
-### Network event (szerver oldal)
+### Network event (server side)
 
 ```lua
 TriggerClientEvent('sc_notify:send', playerId, {
     type    = 'warning',
-    title   = 'Figyelmeztetés',
-    message = 'Megsérült a járműved.',
+    title   = 'Warning',
+    message = 'Your vehicle is damaged.',
 })
 ```
 
 ---
 
-## Paraméterek
+## Parameters
 
-| Mező       | Típus    | Default  | Leírás                                            |
+| Field      | Type     | Default  | Description                                       |
 |------------|----------|----------|---------------------------------------------------|
 | `type`     | `string` | `'info'` | `'info'` / `'success'` / `'warning'` / `'error'`  |
-| `title`    | `string` | `''`     | Cím (opcionális)                                  |
-| `message`  | `string` | `''`     | Üzenet törzs                                      |
-| `duration` | `number` | `5000`   | Megjelenítési idő ms-ban                          |
+| `title`    | `string` | `''`     | Title (optional)                                  |
+| `message`  | `string` | `''`     | Message body                                      |
+| `duration` | `number` | `5000`   | Display duration in ms                            |
 
 ---
 
-## Példák
+## Examples
 
 ```lua
-exports.sc_notify:notify({ type = 'info',    title = 'Info',     message = 'Új küldetés érkezett.' })
-exports.sc_notify:notify({ type = 'success', title = 'Siker',    message = 'Vásárlás kész.' })
-exports.sc_notify:notify({ type = 'warning', title = 'Figyelem', message = 'Kevés a benzin.' })
-exports.sc_notify:notify({ type = 'error',   title = 'Hiba',     message = 'Nincs elég pénz.' })
+exports.sc_notify:notify({ type = 'info',    title = 'Info',    message = 'New mission received.' })
+exports.sc_notify:notify({ type = 'success', title = 'Success', message = 'Purchase complete.' })
+exports.sc_notify:notify({ type = 'warning', title = 'Warning', message = 'Low fuel.' })
+exports.sc_notify:notify({ type = 'error',   title = 'Error',   message = 'Not enough money.' })
 ```
