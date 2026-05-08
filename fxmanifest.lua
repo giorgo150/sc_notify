@@ -1,17 +1,16 @@
 fx_version 'cerulean'
 game 'gta5'
 
-description 'SC Notify - Modern notification system'
-version '1.0.0'
+description 'SC Notify - Modern notification system (React + Tailwind)'
+version '2.0.0'
 
-ui_page 'html/index.html'
+ui_page 'web/dist/index.html'
 
 client_scripts {
     'client.lua'
 }
 
 files {
-    'html/index.html',
-    'html/css/style.css',
-    'html/js/app.js'
+    'web/dist/index.html',
+    'web/dist/assets/*',
 }
